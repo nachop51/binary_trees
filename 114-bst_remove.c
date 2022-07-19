@@ -18,25 +18,51 @@ bst_t *bst_search(const bst_t *tree, int value)
 	return (bst_search(tree->right, value));
 }
 
+/**
+ * find_next - Helps to find the next successor of a node
+ * @tree: Pointer to the root of the tree
+ *
+ * Return: Pointer to the next successor of the node or NULL if it fails
+ */
 bst_t *find_next(bst_t *tree)
 {
-	bst_t *node = NULL;
+	tree = tree->right;
+	while (tree->left)
+		tree = tree->left;
+	return (tree);
+}
 
-	if (tree->right)
+/**
+ * helper - Aux function to change two nodes
+ * @tree: Pointer to the root of the tree
+ * @target: Pointer to the node to be removed
+ *
+ * Return: Pointer to the new root of the tree or NULL if it fails
+ */
+bst_t *helper(bst_t **tree, bst_t *target)
+{
+	bst_t *node = NULL, *root = *tree;
+
+	node = find_next(target);
+	if (node->parent)
+		node->parent->left = node->right;
+	if (node->right)
+		node->right->parent = node->parent;
+	node->left = target->left;
+	node->left->parent = node;
+	node->right = target->right;
+	node->right->parent = node;
+	node->parent = target->parent ? target->parent : NULL;
+	if (target == *tree)
+		*tree = node;
+	else if (target->parent)
 	{
-		node = tree->right;
-		while (node->left)
-			node = node->left;
-		return (node);
+		if (target->parent && target == target->parent->left)
+			target->parent->left = node;
+		else
+			target->parent->right = node;
 	}
-	else if (tree->left)
-	{
-		node = tree->left;
-		while (node->right)
-			node = node->right;
-		return (node);
-	}
-	return (NULL);
+	return (root);
 }
 
 /**
@@ -48,33 +74,28 @@ bst_t *find_next(bst_t *tree)
  */
 bst_t *bst_remove(bst_t *root, int value)
 {
-	bst_t *node = NULL, *target = NULL;
+	bst_t *target = NULL, *aux;
 
 	if (!root)
 		return (NULL);
 	target = bst_search(root, value);
 	if (!target)
-		return (NULL);
-	node = find_next(target);
-	if (!node)
-		return (NULL);
-	if (target->left)
+		return (root);
+	if (target->left && target->right)
+		helper(&root, target);
+	else if ((target->left || target->right) && target->parent)
 	{
-		node->left = target->left;
-		node->left->parent = node;
+		aux = target->left ? target->left : target->right;
+		if (target == target->parent->right)
+			target->parent->right = aux;
+		else
+			target->parent->left = aux;
 	}
-	if (target->right)
+	else if ((target->left || target->right) && !target->parent)
 	{
-		node->right = target->right;
-		node->right->parent = node;
+		target->left->parent = NULL;
+		root = target->left;
 	}
-	node->parent = target->parent ? target->parent : NULL;
-	if (node->parent && target->parent->left == target)
-		node->parent->left = node;
-	else if (node->parent && target->parent->right == target)
-		node->parent->right = node;
-	else if (!node->parent)
-		root = node;
 	free(target);
-	return (node);
+	return (root);
 }
