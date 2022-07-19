@@ -106,8 +106,11 @@ bst_t *bst_remove(bst_t *root, int value)
 	}
 	else if ((target->left || target->right) && !target->parent)
 	{
-		target->left->parent = NULL;
-		root = target->left;
+		if (target->left)
+			target->left->parent = NULL;
+		else
+			target->right->parent = NULL;
+		root = target->left ? target->left : target->right;
 	}
 	free(target);
 	return (root);
