@@ -61,10 +61,10 @@ void helper(bst_t **tree, bst_t *target)
 		node->parent->left = node->right;
 	if (node->right)
 		node->right->parent = node->parent;
-	node->left = target->left;
-	node->left->parent = node;
+	target->right->parent = node;
+	target->left->parent = node;
 	node->right = target->right;
-	node->right->parent = node;
+	node->left = target->left;
 	node->parent = target->parent ? target->parent : NULL;
 	if (target == *tree)
 		*tree = node;
