@@ -26,10 +26,23 @@ bst_t *bst_search(const bst_t *tree, int value)
  */
 bst_t *find_next(bst_t *tree)
 {
-	tree = tree->right;
-	while (tree->left)
-		tree = tree->left;
-	return (tree);
+	bst_t *node = NULL;
+
+	if (tree->right)
+	{
+		node = tree->right;
+		while (node->left)
+			node = node->left;
+		return (node);
+	}
+	else if (tree->left)
+	{
+		node = tree->left;
+		while (node->right)
+			node = node->right;
+		return (node);
+	}
+	return (NULL);
 }
 
 /**
