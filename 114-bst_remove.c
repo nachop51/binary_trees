@@ -81,7 +81,7 @@ bst_t *bst_remove(bst_t *root, int value)
 	if (!target)
 		return (root);
 	if (target->left && target->right)
-		helper(&root, target), free(target);
+		helper(&root, target);
 	else if ((target->left || target->right) && target->parent)
 	{
 		aux = target->left ? target->left : target->right;
@@ -90,13 +90,12 @@ bst_t *bst_remove(bst_t *root, int value)
 			target->parent->right = aux;
 		else
 			target->parent->left = aux;
-		free(target);
-		return (root);
 	}
 	else if ((target->left || target->right) && !target->parent)
 	{
 		target->left->parent = NULL;
 		root = target->left;
 	}
+	free(target);
 	return (root);
 }
