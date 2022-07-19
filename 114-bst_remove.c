@@ -39,9 +39,9 @@ bst_t *find_next(bst_t *tree)
  *
  * Return: Pointer to the new root of the tree or NULL if it fails
  */
-bst_t *helper(bst_t **tree, bst_t *target)
+void helper(bst_t **tree, bst_t *target)
 {
-	bst_t *node = NULL, *root = *tree;
+	bst_t *node = NULL;
 
 	node = find_next(target);
 	if (node->parent)
@@ -62,7 +62,6 @@ bst_t *helper(bst_t **tree, bst_t *target)
 		else
 			target->parent->right = node;
 	}
-	return (root);
 }
 
 /**
@@ -82,20 +81,22 @@ bst_t *bst_remove(bst_t *root, int value)
 	if (!target)
 		return (root);
 	if (target->left && target->right)
-		helper(&root, target);
+		helper(&root, target), free(target);
 	else if ((target->left || target->right) && target->parent)
 	{
 		aux = target->left ? target->left : target->right;
+		aux->parent = target->parent;
 		if (target == target->parent->right)
 			target->parent->right = aux;
 		else
 			target->parent->left = aux;
+		free(target);
+		return (root);
 	}
 	else if ((target->left || target->right) && !target->parent)
 	{
 		target->left->parent = NULL;
 		root = target->left;
 	}
-	free(target);
 	return (root);
 }
