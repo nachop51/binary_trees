@@ -1,14 +1,27 @@
 #include "binary_trees.h"
 
 /**
- * max - Finds the max between two ints
- * @x: First int
- * @y: Second int
+ * max - Finds the last node
+ * @tree: Pointer to the root node of the tree
+ * @value: Value to search
  * Return: The max between the two ints
  */
-int max(int x, int y)
+avl_t *max(avl_t *tree, int value)
 {
-	return ((x >= y) ? x : y);
+	avl_t *node = tree;
+	avl_t *prev = NULL;
+
+	while (node && node->n != value)
+	{
+		prev = node;
+		if (node->n == value)
+			return (node);
+		if (value > node->n)
+			node = node->right;
+		else
+			node = node->left;
+	}
+	return (prev);
 }
 
 /**
@@ -19,9 +32,13 @@ int max(int x, int y)
  */
 size_t height(const binary_tree_t *tree)
 {
+	size_t left, right;
+
 	if (!tree)
 		return (0);
-	return (1 + max(height(tree->left), height(tree->right)));
+	left = height(tree->left);
+	right = height(tree->right);
+	return (left > right ? left + 1 : right + 1);
 }
 
 /**
@@ -40,9 +57,12 @@ avl_t *search_prev(avl_t **tree, int value)
 		prev = node;
 		if (node->n == value)
 			return (prev);
-		node = node->n > value ? node->left : node->right;
+		if (value > node->n)
+			node = node->right;
+		else
+			node = node->left;
 	}
-	return (prev);
+	return (prev ? prev : *tree);
 }
 
 /**
@@ -55,7 +75,7 @@ avl_t *search_prev(avl_t **tree, int value)
 avl_t *avl_aux(avl_t **tree, int value, avl_t *parent)
 {
 	int balance;
-	avl_t *node = *tree;
+	avl_t *node = *tree, *aux;
 
 	if (!tree)
 		return (NULL);
@@ -91,8 +111,15 @@ avl_t *avl_aux(avl_t **tree, int value, avl_t *parent)
 		node->right = binary_tree_rotate_right(node->right);
 		return (binary_tree_rotate_left(node));
 	}
-
-	return (node);
+	aux = max(node, value);
+	if (aux->n == value || !aux->parent)
+		return (aux);
+	else if (aux->n > value && aux->left)
+		return (aux->left);
+	else if (aux->n > value && aux->right)
+		return (aux->right);
+	else
+		return (NULL);
 }
 
 /**
