@@ -24,6 +24,12 @@ size_t height(const binary_tree_t *tree)
 	return (1 + max(height(tree->left), height(tree->right)));
 }
 
+/**
+ * search_prev - Searches for the previous node in a binary tree
+ * @tree: Pointer to the tree
+ * @value: Value to search for
+ * Return: Pointer to the previous node or NULL if it fails
+ */
 avl_t *search_prev(avl_t **tree, int value)
 {
 	avl_t *node = *tree;
@@ -39,6 +45,13 @@ avl_t *search_prev(avl_t **tree, int value)
 	return (prev);
 }
 
+/**
+ * avl_aux - Auxiliary function to insert a node in an AVL tree
+ * @tree: Pointer to the root of the tree
+ * @value: Value to insert in the tree
+ * @parent: Pointer to the parent of the node to insert
+ * Return: Pointer to the new node or NULL if it fails
+ */
 avl_t *avl_aux(avl_t **tree, int value, avl_t *parent)
 {
 	int balance;
@@ -62,24 +75,24 @@ avl_t *avl_aux(avl_t **tree, int value, avl_t *parent)
 	balance = height(node->left) - height(node->right);
 
 	if (balance > 1 && value < node->left->n)
-		return binary_tree_rotate_right(node);
+		return (binary_tree_rotate_right(node));
 
 	if (balance < -1 && value > node->right->n)
-		return binary_tree_rotate_left(node);
+		return (binary_tree_rotate_left(node));
 
 	if (balance > 1 && value > node->left->n)
 	{
 		node->left = binary_tree_rotate_left(node->left);
-		return binary_tree_rotate_right(node);
+		return (binary_tree_rotate_right(node));
 	}
 
 	if (balance < -1 && value < node->right->n)
 	{
 		node->right = binary_tree_rotate_right(node->right);
-		return binary_tree_rotate_left(node);
+		return (binary_tree_rotate_left(node));
 	}
 
-	return node;
+	return (node);
 }
 
 /**
