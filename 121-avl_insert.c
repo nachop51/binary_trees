@@ -112,14 +112,7 @@ avl_t *avl_aux(avl_t **tree, int value, avl_t *parent)
 		return (binary_tree_rotate_left(node));
 	}
 	aux = max(node, value);
-	if (aux->n == value || !aux->parent)
-		return (aux);
-	else if (aux->n > value && aux->left)
-		return (aux->left);
-	else if (aux->n > value && aux->right)
-		return (aux->right);
-	else
-		return (NULL);
+	return (aux);
 }
 
 /**
